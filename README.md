@@ -12,8 +12,36 @@ For Mac, run ```install-mac.sh```
 
 For Ubuntu, run ```install-ubuntu.sh```
 
-## Test Everything works before start coding
+## Test Connectivity before start coding
 
+```c++
+#include <iostream>
+#include "tools.h"
+
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+using std::vector;
+
+Tools::Tools() {}
+
+Tools::~Tools() {}
+
+VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
+                              const vector<VectorXd> &ground_truth) {
+  VectorXd temp(4);
+  temp << 1, 2, 3, 4;
+  return temp;
+}
+
+MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
+  MatrixXd temp(3,4);
+  return temp;
+}
+```
+
+Run simulator you should able to see it connected to this project, simulator will display RMSE we just setup in code
+
+![ConnectivityTest](Docs/ConnectivityTest.png)
 
 In this project you will utilize a kalman filter to estimate the state of a moving object of interest with noisy lidar and radar measurements. Passing the project requires obtaining RMSE values that are lower that the tolerance outlined in the project rubric. 
 
