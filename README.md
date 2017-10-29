@@ -105,7 +105,7 @@ OUTPUT: values provided by the c++ program to the simulator
    * On windows, you may need to run: `cmake .. -G "Unix Makefiles" && make`
 4. Run it: `./ExtendedKF `
 
-#The Result
+# RMSE Result
 
 |Lidar + Radar | Lidar    | Radar |
 |-------------:|---------:|------:|
@@ -113,6 +113,8 @@ OUTPUT: values provided by the c++ program to the simulator
 | Y: 0.0855    | 0.1153   | 0.3464|
 |VX: 0.4513    | 0.6383   | 0.5835|
 |VY: 0.4399    | 0.5346   | 0.8040|
+
+By combine both Lidar and Radar measurement, we got better result.
 
 
 #References
