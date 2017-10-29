@@ -36,6 +36,8 @@ FusionEKF::FusionEKF() {
     * Finish initializing the FusionEKF.
     * Set the process and measurement noises
   */
+  H_laser_ << 1,0,0,0,
+      0,1,0,0;
 
 
 }
@@ -62,6 +64,18 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
     ekf_.x_ << 1, 1, 1, 1;
+
+    ekf_.P_ = MatrixXd(4,4);
+    ekf_.P_ <<  1,  0,   0,   0,
+                0,  1,   0,   0,
+                0,  0,1000,   0,
+                0,  0,   0,1000;
+
+    ekf_.F_ = MatrixXd(4,4);
+    ekf_.F_ <<  1,0,1,0,
+                0,1,0,1,
+                0,0,1,0,
+                0,0,0,1;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       /**
@@ -103,6 +117,29 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      * Update the process noise covariance matrix.
      * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
    */
+  float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0 ;
+  previous_timestamp_ = measurement_pack.timestamp_;
+
+
+  // update F for the current measurement
+  ekf_.F_ = MatrixXd(4,4);
+  ekf_.F_ << 1, 0, dt,  0,
+      0, 1,  0, dt,
+      0, 0,  1,  0,
+      0, 0,  0,  1;
+
+  float noise_ax = 9;
+  float noise_ay = 9;
+
+  float dt_2 = pow(dt, 2.0);
+  float dt_3 = pow(dt, 3.0);
+  float dt_4 = pow(dt, 4.0);
+
+  ekf_.Q_ = MatrixXd(4,4);
+  ekf_.Q_ << dt_4 / 4 * noise_ax,                   0, dt_3 / 2 * noise_ax,                   0,
+      0, dt_4 / 4 * noise_ay,                   0, dt_3 / 2 * noise_ay,
+      dt_3 / 2 * noise_ax,                   0,       dt_2*noise_ax,                   0,
+      0, dt_3 / 2 * noise_ay,                   0,       dt_2*noise_ay;
 
   ekf_.Predict();
 
@@ -120,6 +157,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     // Radar updates
   } else {
     // Laser updates
+    ekf_.H_ = H_laser_;
+    ekf_.R_ = R_laser_;
+    ekf_.Update(measurement_pack.raw_measurements_);
   }
 
   // print the output
