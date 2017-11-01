@@ -19,6 +19,7 @@ motion_uncertainty = 2.
 
 current_mean = 0.
 current_uncertainty = 10000.
+# current_uncertainty = 0.000000001
 
 #Please print out ONLY the final values of the mean
 #and the variance in a list [mu, sig].
